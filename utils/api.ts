@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://lx-backend.onrender.com/";
+export const BASE_URL = "https://lx-backend.onrender.com";
 
 const API = axios.create({
   baseURL: BASE_URL,

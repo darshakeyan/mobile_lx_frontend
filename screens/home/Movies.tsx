@@ -1,15 +1,25 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import { Text, View, Image, FlatList, StyleSheet } from "react-native";
+import React, { useContext, useState } from "react";
+import {
+  Text,
+  View,
+  Image,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { useSelector } from "react-redux";
 import SingleSelect from "../../components/SingleSelect";
 import Movie from "../../components/Movie";
 import Card from "../../components/Card";
 import { Colors } from "../../utils/colors";
-import {data} from '../../mock/movies';
+import { data } from "../../mock/movies";
+import { AuthContext } from "../../context/AuthContext";
 
 const Movies = () => {
   const mydata = useSelector((state: any) => state.reducer);
+
+  const { logout } = useContext(AuthContext);
 
   const addToFavHandler = () => {
     console.log("ADD FAV");
@@ -33,6 +43,13 @@ const Movies = () => {
 
         <View style={styles.movieContainer}>
           <Text style={styles.movieTitle}>Movies</Text>
+          <TouchableOpacity
+            onPress={() => {
+              logout();
+            }}
+          >
+            <Text style={{ color: "white" }}>Logout</Text>
+          </TouchableOpacity>
           <FlatList
             data={data.movies}
             renderItem={({ item }) => (
