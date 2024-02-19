@@ -1,20 +1,29 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Login from "./screens/auth/Login";
+import Signup from "./screens/auth/Signup";
+import Movies from "./screens/home/Movies";
+import { Provider } from "react-redux";
+import { PaperProvider } from 'react-native-paper';
+
+import { store } from "./store";
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <PaperProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Movies"
+            screenOptions={{ headerShown: false }}
+          >
+            <Stack.Screen name="Movies" component={Movies} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Signup" component={Signup} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
