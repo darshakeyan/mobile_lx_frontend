@@ -1,21 +1,33 @@
 // import action type from constant file - FETCH_MOVIES
-import { put, takeEvery } from "redux-saga/effects";
+import { all, call, put, takeEvery, takeLatest } from "redux-saga/effects";
+import { signInAPI } from "../utils/api";
+import { signinToAccountError, signinToAccountSuccess } from "./actions";
+import { SIGN_IN_ACCOUNT } from "./constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-function* fetchMovies(action: any) {
+function* signinToAccount(action: any): Generator {
   try {
-    // call async API
-
-    // get the data
-
-    // we need to put the data in reducer
-    yield put({ type: "Here_we_need_to_put_data", data: "xyc" });
-  } catch (error) {
-    // Handle Failer
+    let authResponse: any = yield call(signInAPI, action.credential);
+    yield put(signinToAccountSuccess(authResponse));
+    AsyncStorage.setItem("token", authResponse.token);
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const errorMessage = error.response.data.message;
+      yield put(signinToAccountError(errorMessage));
+    } else {
+      yield put(
+        signinToAccountError("An error occurred. Please try again later.")
+      );
+    }
   }
 }
 
+function* listenForSignInToAccount() {
+  yield takeLatest(SIGN_IN_ACCOUNT, signinToAccount);
+}
+
 function* mySaga() {
-  yield takeEvery(/* Name of the action */ "Define_action", fetchMovies);
+  yield all([listenForSignInToAccount()]);
 }
 
 export default mySaga;

@@ -1,18 +1,29 @@
-import React, { useContext, useState } from "react";
+import React, { memo, useContext, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import type { StackNavigationProp } from "@react-navigation/stack";
-import { AuthContext } from "../../context/AuthContext";
+
+import { useDispatch, useSelector } from "react-redux";
+import { signinToAccount } from "../../redux/actions";
+import { Colors } from "../../utils/colors";
+import { ActivityIndicator } from "react-native-paper";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const userTokenErrorMessage = useSelector(
+    (state: any) => state.auth.userTokenError
+  );
+  const isLoading = useSelector((state: any) => state.auth.isLoading);
+
+  const dispatch = useDispatch();
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { signin, logout } = useContext(AuthContext);
+
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -39,7 +50,6 @@ const Login = () => {
             onChangeText={(text) => setEmail(text)}
           />
         </Animated.View>
-        {/* Validation for Email */}
         <Animated.View
           entering={FadeInDown.delay(200).duration(1000).springify()}
           className="bg-gray-400 p-5 rounded-2xl w-full mb-3"
@@ -61,20 +71,27 @@ const Login = () => {
             />
           </View>
         </Animated.View>
-        {/* Validation for Password */}
+        {userTokenErrorMessage && (
+          <Text style={{ color: Colors.primaryColor, fontSize: 12 }}>
+            {`${userTokenErrorMessage} `}
+          </Text>
+        )}
         <Animated.View
           entering={FadeInDown.delay(400).duration(1000).springify()}
           className="w-full"
         >
           <TouchableOpacity
-            className="w-full bg-white border border-white p-3 rounded-2xl mb-3"
+            className="w-full bg-white border border-white p-3 rounded-2xl mb-3 flex flex-row items-center justify-center space-x-3"
             onPress={() => {
-              signin({ email, password });
+              dispatch(signinToAccount({ email, password }));
             }}
           >
             <Text className="text-xl font-bold text-[#0b0404] text-center">
               Sign In
             </Text>
+            {isLoading && (
+              <ActivityIndicator size={"small"} color={Colors.primaryBg} />
+            )}
           </TouchableOpacity>
         </Animated.View>
         <Animated.View

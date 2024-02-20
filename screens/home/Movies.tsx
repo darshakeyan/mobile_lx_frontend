@@ -1,5 +1,5 @@
+import React from "react";
 import { StatusBar } from "expo-status-bar";
-import React, { useContext, useState } from "react";
 import {
   Text,
   View,
@@ -8,19 +8,16 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SingleSelect from "../../components/SingleSelect";
 import Movie from "../../components/Movie";
 import Card from "../../components/Card";
 import { Colors } from "../../utils/colors";
 import { data } from "../../mock/movies";
-import { AuthContext } from "../../context/AuthContext";
+import { logOutFromAccount } from "../../redux/actions";
 
 const Movies = () => {
-  const mydata = useSelector((state: any) => state.reducer);
-
-  const { logout } = useContext(AuthContext);
-
+  const dispatch = useDispatch();
   const addToFavHandler = () => {
     console.log("ADD FAV");
   };
@@ -45,7 +42,7 @@ const Movies = () => {
           <Text style={styles.movieTitle}>Movies</Text>
           <TouchableOpacity
             onPress={() => {
-              logout();
+              dispatch(logOutFromAccount());
             }}
           >
             <Text style={{ color: "white" }}>Logout</Text>
