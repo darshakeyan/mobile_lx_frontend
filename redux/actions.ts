@@ -3,6 +3,7 @@ import {
   LOGOUT_FROM_ACCOUNT,
   SIGN_IN_ACCOUNT,
   SIGN_IN_ACCOUNT_SUCCESS,
+  USER_AUTH_CHECK,
 } from "./constants";
 
 export const signinToAccount = (credential: UserAuthentication) => {
@@ -29,5 +30,12 @@ export const signinToAccountError = (error: any) => {
 export const logOutFromAccount = () => {
   return {
     type: LOGOUT_FROM_ACCOUNT,
+  };
+};
+
+export const userAuthCheck = (token: any) => {
+  return {
+    type: USER_AUTH_CHECK,
+    token,
   };
 };

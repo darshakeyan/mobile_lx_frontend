@@ -11,10 +11,10 @@ import {
   SIGN_IN_ACCOUNT,
   SIGN_IN_ACCOUNT_ERROR,
   SIGN_IN_ACCOUNT_SUCCESS,
+  USER_AUTH_CHECK,
 } from "./constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// default value of an data state
 export const initialState: any = {
   isLoading: false,
   userToken: null,
@@ -29,10 +29,7 @@ export const authReducers = (state = initialState, action: any) =>
         break;
       case SIGN_IN_ACCOUNT_SUCCESS:
         if (action.response) {
-          draftState.userToken = {
-            ...state,
-            userToken: JSON.stringify(action.response.token),
-          };
+          draftState.userToken = JSON.stringify(action.response.token);
         } else {
           draftState.userTokenError = action.error;
         }
@@ -43,11 +40,12 @@ export const authReducers = (state = initialState, action: any) =>
         break;
       case LOGOUT_FROM_ACCOUNT:
         draftState.isLoading = false;
-        draftState.userToken = {
-          ...state,
-          userToken: null,
-        };
+        draftState.userToken = null
         AsyncStorage.removeItem("token");
+        draftState.userTokenError = null;
+        break;
+      case USER_AUTH_CHECK: 
+        draftState.userToken = action.token;
         break;
     }
   });

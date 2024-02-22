@@ -15,15 +15,9 @@ const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
-
-  const userTokenErrorMessage = useSelector(
-    (state: any) => state.auth.userTokenError
-  );
-  const isLoading = useSelector((state: any) => state.auth.isLoading);
-
+  const { userTokenError, isLoading } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   const navigation = useNavigation<StackNavigationProp<any>>();
-
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -32,7 +26,7 @@ const Login = () => {
       <StatusBar style="light" />
       <View className="flex items-center">
         <Animated.Image
-          entering={FadeInUp.duration(1000).springify()}
+          entering={FadeInUp.duration(200).springify()}
           className="h-20 w-20 rounded-full"
           source={require("../../assets/images/lx.jpg")}
         />
@@ -71,9 +65,9 @@ const Login = () => {
             />
           </View>
         </Animated.View>
-        {userTokenErrorMessage && (
+        {userTokenError && (
           <Text style={{ color: Colors.primaryColor, fontSize: 12 }}>
-            {`${userTokenErrorMessage} `}
+            {`${userTokenError} `}
           </Text>
         )}
         <Animated.View
