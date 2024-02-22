@@ -1,9 +1,15 @@
 // import action type from constant file - FETCH_MOVIES
 import { all, call, put, takeEvery, takeLatest } from "redux-saga/effects";
-import { signInAPI } from "../utils/api";
-import { signinToAccountError, signinToAccountSuccess } from "./actions";
-import { SIGN_IN_ACCOUNT } from "./constants";
+import { signInAPI, signupAPI } from "../utils/api";
+import {
+  signinToAccountError,
+  signinToAccountSuccess,
+  signupToAccountError,
+  signupToAccountSuccess,
+} from "./actions";
+import { SIGN_IN_ACCOUNT, SIGN_UP_ACCOUNT } from "./constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ToastAndroid } from "react-native";
 
 function* signinToAccount(action: any): Generator {
   try {
@@ -22,12 +28,28 @@ function* signinToAccount(action: any): Generator {
   }
 }
 
+function* signupToAccount(action: any): Generator {
+  try {
+    let response: any = yield call(signupAPI, action.userDetail);
+    yield put(signupToAccountSuccess(response));
+    ToastAndroid.show(response.message, ToastAndroid.SHORT);
+  } catch (error: any) {
+    const errorMessage = error.response.data.message;
+    yield put(signupToAccountError(errorMessage));
+    ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+  }
+}
+
 function* listenForSignInToAccount() {
   yield takeLatest(SIGN_IN_ACCOUNT, signinToAccount);
 }
 
+function* listenForSignUpToAccount() {
+  yield takeLatest(SIGN_UP_ACCOUNT, signupToAccount);
+}
+
 function* mySaga() {
-  yield all([listenForSignInToAccount()]);
+  yield all([listenForSignInToAccount(), listenForSignUpToAccount()]);
 }
 
 export default mySaga;
