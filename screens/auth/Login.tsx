@@ -77,7 +77,9 @@ const Login = () => {
           <TouchableOpacity
             className="w-full bg-white border border-white p-3 rounded-2xl mb-3 flex flex-row items-center justify-center space-x-3"
             onPress={() => {
-              dispatch(signinToAccount({ email, password }));
+              dispatch(
+                signinToAccount({ email: email.toLowerCase(), password })
+              );
             }}
           >
             <Text className="text-xl font-bold text-[#0b0404] text-center">

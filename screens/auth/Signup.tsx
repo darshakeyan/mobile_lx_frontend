@@ -122,7 +122,9 @@ const Signup = () => {
             } border border-white p-3 rounded-2xl mb-3`}
             disabled={!validEmail && !validPassword}
             onPress={() => {
-              dispatch(signupToAccount({ name, email, password }));
+              dispatch(
+                signupToAccount({ name, email: email.toLowerCase(), password })
+              );
             }}
           >
             <Text

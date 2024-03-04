@@ -16,12 +16,19 @@ import Card from "../../components/Card";
 import { Colors } from "../../utils/colors";
 import { useInfiniteMovies, useMovieTrailer } from "../../service/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { setMovieIdFromViewport, setSortByValue } from "../../redux/actions";
+import {
+  logOutFromAccount,
+  setMovieIdFromViewport,
+  setSortByValue,
+} from "../../redux/actions";
 import FilterModal from "../../components/FilterModal";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { sortByOptions } from "./mock/data";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const Movies = () => {
+  const navigation = useNavigation<StackNavigationProp<any>>();
   // redux store
   const dispatch = useDispatch();
   const { movieId, sortByValue } = useSelector((state: any) => state.app);
@@ -95,9 +102,30 @@ const Movies = () => {
             className="h-10 w-10"
             source={require("../../assets/images/icon.jpg")}
           />
-          <TouchableOpacity onPress={show}>
-            <AntDesign color={"#E19133"} name="filter" size={24} />
-          </TouchableOpacity>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+            className="space-x-3"
+          >
+            <TouchableOpacity onPress={show}>
+              <AntDesign color={"#E19133"} name="filter" size={24} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                dispatch(logOutFromAccount());
+              }}
+            >
+              <AntDesign
+                color="red"
+                name="logout"
+                size={24}
+                style={{ fontWeight: "800" }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <FilterModal visible={modalVisible} setVisible={setModalVisible} />
         <SingleSelect

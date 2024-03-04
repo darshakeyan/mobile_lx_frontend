@@ -22,7 +22,6 @@ const FilterModal = ({ visible, setVisible }: any) => {
   const dispatch = useDispatch();
   const { filters } = useSelector((state: any) => state.app);
   const hide = () => setVisible(false);
-  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const { data } = useLanguages();
   const languages = data?.data?.map((lang: any) => ({
@@ -42,27 +41,17 @@ const FilterModal = ({ visible, setVisible }: any) => {
         <Pressable style={styles.closeModal} onPress={hide} />
         <View style={styles.contentContainer}>
           <View style={styles.headerContainer}>
-            <View style={styles.left}>
-              <TouchableOpacity onPress={hide}>
-                <AntDesign
-                  color={Colors.primaryColor}
-                  name="close"
-                  size={30}
-                  style={{ fontWeight: "800" }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.center}>
-              <Text style={styles.text}>{"Filters "}</Text>
-            </View>
-            <View style={styles.right}>
-              <Button
-                title="Logout "
-                onPress={() => {
-                  dispatch(logOutFromAccount());
-                  navigation.navigate("Login");
-                }}
+            <TouchableOpacity onPress={hide}>
+              <AntDesign
+                color={Colors.primaryColor}
+                name="close"
+                size={30}
+                style={{ fontWeight: "800" }}
               />
+            </TouchableOpacity>
+
+            <View style={{ marginRight:170  }}>
+              <Text style={styles.text}>{"Filters "}</Text>
             </View>
           </View>
 
@@ -120,22 +109,11 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerContainer: {
-    flexDirection: "row",
+    width: "100%",
     justifyContent: "space-between",
+    flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-  },
-  left: {
-    flex: 1,
-    alignItems: "flex-start",
-  },
-  center: {
-    flex: 1,
-    alignItems: "center",
-  },
-  right: {
-    flex: 1,
-    alignItems: "flex-end",
   },
 });
 
