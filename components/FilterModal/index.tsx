@@ -13,12 +13,16 @@ import {
 import { Colors } from "../../utils/colors";
 import SingleSelect from "../SingleSelect";
 import { useLanguages } from "../../service/auth";
-import { useSelector } from "react-redux";
-import { setFilters } from "../../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { logOutFromAccount, setFilters } from "../../redux/actions";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const FilterModal = ({ visible, setVisible }: any) => {
+  const dispatch = useDispatch();
   const { filters } = useSelector((state: any) => state.app);
   const hide = () => setVisible(false);
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const { data } = useLanguages();
   const languages = data?.data?.map((lang: any) => ({
@@ -37,32 +41,31 @@ const FilterModal = ({ visible, setVisible }: any) => {
       <SafeAreaView style={styles.container}>
         <Pressable style={styles.closeModal} onPress={hide} />
         <View style={styles.contentContainer}>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <TouchableOpacity onPress={hide}>
-              <AntDesign
-                color={Colors.primaryColor}
-                name="close"
-                size={30}
-                style={{ fontWeight: "800" }}
-              />
-            </TouchableOpacity>
-
-            <View
-              style={{
-                display: "flex",
-                width: "85%",
-                alignItems: "center",
-              }}
-            >
+          <View style={styles.headerContainer}>
+            <View style={styles.left}>
+              <TouchableOpacity onPress={hide}>
+                <AntDesign
+                  color={Colors.primaryColor}
+                  name="close"
+                  size={30}
+                  style={{ fontWeight: "800" }}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.center}>
               <Text style={styles.text}>{"Filters "}</Text>
             </View>
+            <View style={styles.right}>
+              <Button
+                title="Logout "
+                onPress={() => {
+                  dispatch(logOutFromAccount());
+                  navigation.navigate("Login");
+                }}
+              />
+            </View>
           </View>
+
           <SingleSelect
             data={languages}
             placeholder="Select Language"
@@ -115,6 +118,24 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "white",
     padding: 8,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  left: {
+    flex: 1,
+    alignItems: "flex-start",
+  },
+  center: {
+    flex: 1,
+    alignItems: "center",
+  },
+  right: {
+    flex: 1,
+    alignItems: "flex-end",
   },
 });
 
