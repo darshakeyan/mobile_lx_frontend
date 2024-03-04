@@ -1,6 +1,7 @@
 import { UserAuthentication, UserDetailAuthentication } from "../types/auth";
 import {
   LOGOUT_FROM_ACCOUNT,
+  SET_FILTERS,
   SET_MOVIE_ID_FROM_VIEW_PORT,
   SET_SORTBY_VALUE,
   SIGN_IN_ACCOUNT,
@@ -77,5 +78,12 @@ export const setSortByValue = (value: string) => {
   return {
     type: SET_SORTBY_VALUE,
     value,
+  };
+};
+
+export const setFilters = (filter: any) => {
+  return {
+    type: SET_FILTERS,
+    filter,
   };
 };

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Text,
@@ -7,6 +7,7 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 
 import SingleSelect from "../../components/SingleSelect";
@@ -15,7 +16,10 @@ import Card from "../../components/Card";
 import { Colors } from "../../utils/colors";
 import { useInfiniteMovies, useMovieTrailer } from "../../service/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { setMovieIdFromViewport } from "../../redux/actions";
+import { setMovieIdFromViewport, setSortByValue } from "../../redux/actions";
+import FilterModal from "../../components/FilterModal";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { sortByOptions } from "./mock/data";
 
 const Movies = () => {
   // redux store
@@ -23,6 +27,7 @@ const Movies = () => {
   const { movieId, sortByValue } = useSelector((state: any) => state.app);
 
   // local store
+  const [modalVisible, setModalVisible] = useState(false);
 
   // reference
   const movieListRef = useRef(null);
@@ -68,6 +73,7 @@ const Movies = () => {
   };
 
   // defining view port
+  // research -> youtube video link doesn't support
   const onViewableItemChanged = ({ viewableItems }: any) => {
     if (viewableItems.length === 1) {
       const movieId = viewableItems[0]?.item.id.toString();
@@ -78,14 +84,7 @@ const Movies = () => {
     }
   };
 
-  // misc
-  const addToFavHandler = () => {
-    console.log("ADD FAV");
-  };
-
-  const addToWishListHandler = () => {
-    console.log("Add to Wishlist");
-  };
+  const show = () => setModalVisible(true);
 
   return (
     <View className="bg-[#0b0404] px-2 h-full w-full">
@@ -96,9 +95,20 @@ const Movies = () => {
             className="h-10 w-10"
             source={require("../../assets/images/icon.jpg")}
           />
+          <TouchableOpacity onPress={show}>
+            <AntDesign color={"#E19133"} name="filter" size={24} />
+          </TouchableOpacity>
         </View>
-
-        <SingleSelect />
+        <FilterModal visible={modalVisible} setVisible={setModalVisible} />
+        <SingleSelect
+          data={sortByOptions}
+          placeholder="Select Sort By Option"
+          value={sortByValue}
+          title="Sort Results By"
+          allowSearch={false}
+          onChange={setSortByValue}
+          mode="SORTBY"
+        />
 
         <View style={styles.movieContainer}>
           <Text style={styles.movieTitle}>Movies</Text>
@@ -114,8 +124,6 @@ const Movies = () => {
                     <Movie
                       title={item.original_title}
                       releaseDate={item.release_date}
-                      onAddToFavorites={addToFavHandler}
-                      onAddToWishlist={addToWishListHandler}
                       rate={item.vote_average}
                       image={item.poster_path}
                     />
@@ -132,7 +140,7 @@ const Movies = () => {
               viewabilityConfig={viewabilityConfig.current}
               onRefresh={() => fetchPreviousPage()}
               refreshing={isFetchingPreviousPage}
-              contentContainerStyle={{ paddingBottom: 350 }} // Adjust paddingBottom as needed
+              contentContainerStyle={{ paddingBottom: 350 }}
               ListFooterComponent={isFetchingNextPage ? renderSpinner : null}
             />
           )}

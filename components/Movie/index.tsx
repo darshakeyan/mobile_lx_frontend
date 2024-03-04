@@ -7,8 +7,6 @@ import NotFound from "../NotFound";
 type MovieProps = {
   title: string;
   releaseDate: string;
-  onAddToFavorites: () => void;
-  onAddToWishlist: () => void;
   rate: string;
   image: any;
 };
@@ -16,8 +14,6 @@ type MovieProps = {
 const Movie = ({
   title,
   releaseDate,
-  onAddToFavorites,
-  onAddToWishlist,
   rate,
   image,
 }: MovieProps) => {

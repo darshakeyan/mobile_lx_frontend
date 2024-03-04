@@ -21,6 +21,11 @@ export const getTrailerByMovieId = async (id: string) => {
   return data;
 };
 
+export const getLanaguges = async () => {
+  const data = await API.get(`configuration/languages`);
+  return data;
+};
+
 export const movieList = ({
   pageParam = 1,
   queryKey,
@@ -60,6 +65,14 @@ export const useMovieTrailer = (movieId: string) => {
   return useQuery({
     queryKey: ["movie-video", movieId],
     queryFn: () => getTrailerByMovieId(movieId),
+    staleTime: 15 * 60 * 1000,
+  });
+};
+
+export const useLanguages = () => {
+  return useQuery({
+    queryKey: ["languages"],
+    queryFn: getLanaguges,
     staleTime: 15 * 60 * 1000,
   });
 };

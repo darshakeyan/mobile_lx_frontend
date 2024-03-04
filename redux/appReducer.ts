@@ -1,9 +1,14 @@
 import { produce } from "immer";
-import { SET_MOVIE_ID_FROM_VIEW_PORT, SET_SORTBY_VALUE } from "./constants";
+import {
+  SET_FILTERS,
+  SET_MOVIE_ID_FROM_VIEW_PORT,
+  SET_SORTBY_VALUE,
+} from "./constants";
 
 export const initialState: any = {
   movieId: "",
   sortByValue: "",
+  filters: {},
 };
 
 export const appReducers = (state = initialState, action: any) =>
@@ -14,5 +19,12 @@ export const appReducers = (state = initialState, action: any) =>
         break;
       case SET_SORTBY_VALUE:
         draftState.sortByValue = action.value;
+      case SET_FILTERS:
+        console.warn(action);
+        draftState.filters = {
+          ...draftState.filters,
+          language: action.filter.language,
+        };
+        break;
     }
   });

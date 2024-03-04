@@ -3,43 +3,24 @@ import { View, Text, StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Colors } from "../../utils/colors";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setSortByValue } from "../../redux/actions";
 
-const sortByOptions = [
-  {
-    label: "Popularity Ascending",
-    value: "popularity.asc",
-  },
-  {
-    label: "Popularity Descending",
-    value: "popularity.desc",
-  },
-  {
-    label: "Rating Ascending",
-    value: "vote_average.asc",
-  },
-  {
-    label: "Rating Descending",
-    value: "vote_average.desc",
-  },
-  {
-    label: "Release Date Ascending",
-    value: "primary_release_date.asc",
-  },
-  {
-    label: "Release Date Descending",
-    value: "primary_release_date.desc",
-  },
-];
-
-const SingleSelect = ({}) => {
+const SingleSelect = ({
+  data,
+  placeholder,
+  value,
+  title,
+  allowSearch,
+  selectSearchPlaceholder = "",
+  onChange,
+  mode = "",
+}: any) => {
   const dispatch = useDispatch();
-  const { sortByValue } = useSelector((state: any) => state.app);
   const [isFocus, setIsFocus] = useState(false);
   return (
     <View style={styles.container}>
-      <Text style={[styles.label]}>Sort Results By</Text>
+      <Text style={[styles.label]}>{title}</Text>
       <Dropdown
         style={[
           styles.dropdown,
@@ -50,19 +31,24 @@ const SingleSelect = ({}) => {
         itemContainerStyle={{
           backgroundColor: Colors.primaryBg,
         }}
+        search={allowSearch}
+        searchPlaceholder={selectSearchPlaceholder}
         activeColor="#008080"
         itemTextStyle={{ color: Colors.primaryColor }}
         iconStyle={styles.iconStyle}
-        data={sortByOptions}
+        data={data}
         maxHeight={250}
         labelField="label"
         valueField="value"
-        placeholder={!isFocus ? "Select Sort By Option" : "..."}
-        value={sortByValue}
+        placeholder={!isFocus ? placeholder : "..."}
+        value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item: any) => {
-          dispatch(setSortByValue(item.value));
+          console.warn(item.value);
+          mode === "SORTBY"
+            ? dispatch(onChange(item.value))
+            : dispatch(onChange({ language: item.value }));
           setIsFocus(false);
         }}
         renderLeftIcon={() => (
