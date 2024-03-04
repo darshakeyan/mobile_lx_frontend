@@ -20,10 +20,9 @@ import { setMovieIdFromViewport } from "../../redux/actions";
 const Movies = () => {
   // redux store
   const dispatch = useDispatch();
-  const { movieId } = useSelector((state: any) => state.app);
+  const { movieId, sortByValue } = useSelector((state: any) => state.app);
 
   // local store
-  const [status, setStatus] = React.useState({});
 
   // reference
   const movieListRef = useRef(null);
@@ -41,7 +40,10 @@ const Movies = () => {
     fetchPreviousPage,
     isFetchingPreviousPage,
     hasNextPage,
-  } = useInfiniteMovies();
+  } = useInfiniteMovies({
+    sortBy: sortByValue,
+  });
+
   const { data: video, isLoading: isMovieVideoLoading } =
     useMovieTrailer(movieId);
 
@@ -94,8 +96,9 @@ const Movies = () => {
             className="h-10 w-10"
             source={require("../../assets/images/icon.jpg")}
           />
-          <SingleSelect />
         </View>
+
+        <SingleSelect />
 
         <View style={styles.movieContainer}>
           <Text style={styles.movieTitle}>Movies</Text>

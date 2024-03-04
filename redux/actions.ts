@@ -2,6 +2,7 @@ import { UserAuthentication, UserDetailAuthentication } from "../types/auth";
 import {
   LOGOUT_FROM_ACCOUNT,
   SET_MOVIE_ID_FROM_VIEW_PORT,
+  SET_SORTBY_VALUE,
   SIGN_IN_ACCOUNT,
   SIGN_IN_ACCOUNT_SUCCESS,
   SIGN_UP_ACCOUNT,
@@ -69,5 +70,12 @@ export const setMovieIdFromViewport = (movieId: string) => {
   return {
     type: SET_MOVIE_ID_FROM_VIEW_PORT,
     movieId,
+  };
+};
+
+export const setSortByValue = (value: string) => {
+  return {
+    type: SET_SORTBY_VALUE,
+    value,
   };
 };

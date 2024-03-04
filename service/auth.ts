@@ -25,7 +25,11 @@ export const movieList = ({
   pageParam = 1,
   queryKey,
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
-  return API.get(`/movie/popular?page=${pageParam}`);
+  if (typeof queryKey[1] === "object") {
+    return API.get(
+      `discover/movie?page=${pageParam}&sort_by=${queryKey[1]?.sortBy}`
+    );
+  } else return API.get(pageParam);
 };
 
 export const useInfiniteMovies = (q?: Record<string, any>) => {

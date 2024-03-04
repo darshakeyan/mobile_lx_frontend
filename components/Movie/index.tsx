@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { MaterialIcons, FontAwesome, Entypo } from "@expo/vector-icons";
 import { Colors } from "../../utils/colors";
+import NotFound from "../NotFound";
 
 type MovieProps = {
   title: string;
@@ -22,29 +23,37 @@ const Movie = ({
 }: MovieProps) => {
   return (
     <View>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{
-            uri: `https://image.tmdb.org/t/p/original${image}`,
-          }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <TouchableOpacity style={styles.favIcon} onPress={() => {}}>
-          <MaterialIcons name="favorite-outline" size={30} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.ratingIcon} onPress={() => {}}>
-          <FontAwesome name="star-half-empty" size={30} color="#FFD700" />
-        </TouchableOpacity>
-      </View>
+      {image ? (
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: `https://image.tmdb.org/t/p/original${image}`,
+            }}
+            style={styles.image}
+            resizeMode="cover"
+            alt="Image not Available"
+          />
+
+          <TouchableOpacity style={styles.favIcon} onPress={() => {}}>
+            <MaterialIcons name="favorite-outline" size={30} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.ratingIcon} onPress={() => {}}>
+            <FontAwesome name="star-half-empty" size={30} color="#FFD700" />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <NotFound />
+      )}
 
       <View style={styles.infoContainer}>
         <View style={styles.info}>
           <Text style={styles.title}>{title}</Text>
-          <View style={styles.releaseDateContainer}>
-            <Text style={styles.releaseDate}>Release Date : </Text>
-            <Text style={styles.releaseDate}>{releaseDate}</Text>
-          </View>
+          {releaseDate && (
+            <View style={styles.releaseDateContainer}>
+              <Text style={styles.releaseDate}>Release Date : </Text>
+              <Text style={styles.releaseDate}>{releaseDate}</Text>
+            </View>
+          )}
         </View>
         <TouchableOpacity style={styles.wishlistIcon} onPress={() => {}}>
           <Entypo name="plus" size={30} color="white" />
