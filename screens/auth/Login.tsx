@@ -81,7 +81,7 @@ const Login = () => {
             }}
           >
             <Text className="text-xl font-bold text-[#0b0404] text-center">
-              Sign In
+              {"Sign In   "}
             </Text>
             {isLoading && (
               <ActivityIndicator size={"small"} color={Colors.primaryBg} />
@@ -98,7 +98,7 @@ const Login = () => {
               navigation.navigate("Signup");
             }}
           >
-            <Text className="text-white font-extrabold">{`Sign up `}</Text>
+            <Text className="text-white font-extrabold">{`Sign up    `}</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
