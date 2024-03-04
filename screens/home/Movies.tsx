@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Text,
@@ -6,18 +6,77 @@ import {
   Image,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+
 import SingleSelect from "../../components/SingleSelect";
 import Movie from "../../components/Movie";
 import Card from "../../components/Card";
 import { Colors } from "../../utils/colors";
-import { data } from "../../mock/movies";
-import { logOutFromAccount } from "../../redux/actions";
+import { useInfiniteMovies, useMovieTrailer } from "../../service/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { setMovieIdFromViewport } from "../../redux/actions";
 
 const Movies = () => {
+  // redux store
   const dispatch = useDispatch();
+  const { movieId } = useSelector((state: any) => state.app);
+
+  // local store
+  const [status, setStatus] = React.useState({});
+
+  // reference
+  const movieListRef = useRef(null);
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 100,
+    waitForInteraction: true,
+  });
+
+  // API data
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    fetchPreviousPage,
+    isFetchingPreviousPage,
+    hasNextPage,
+  } = useInfiniteMovies();
+  const { data: video, isLoading: isMovieVideoLoading } =
+    useMovieTrailer(movieId);
+
+  const moviesData = data?.pages.flatMap((page) => {
+    return page?.data?.results?.map((movie: any) => {
+      try {
+        return movie;
+      } catch (e) {
+        console.log("Error", { movie });
+      }
+    });
+  });
+
+  // infinite scrolling
+  const handleEndReached = () => {
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  };
+  const renderSpinner = () => {
+    return <ActivityIndicator color="white" size={"large"} />;
+  };
+
+  // defining view port
+  const onViewableItemChanged = ({ viewableItems }: any) => {
+    if (viewableItems.length === 1) {
+      const movieId = viewableItems[0]?.item.id.toString();
+      dispatch(setMovieIdFromViewport(movieId));
+      // play the video
+    } else {
+      // pause the video
+    }
+  };
+
+  // misc
   const addToFavHandler = () => {
     console.log("ADD FAV");
   };
@@ -40,32 +99,40 @@ const Movies = () => {
 
         <View style={styles.movieContainer}>
           <Text style={styles.movieTitle}>Movies</Text>
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(logOutFromAccount());
-            }}
-          >
-            <Text style={{ color: "white" }}>Logout</Text>
-          </TouchableOpacity>
-          <FlatList
-            data={data.movies}
-            renderItem={({ item }) => (
-              <View style={styles.container}>
-                <Card>
-                  <Movie
-                    title={item.title}
-                    releaseDate={item.realease_date}
-                    onAddToFavorites={addToFavHandler}
-                    onAddToWishlist={addToWishListHandler}
-                    rate={item.rate}
-                    image={item.image}
-                  />
-                </Card>
-              </View>
-            )}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
-          />
+          {isLoading ? (
+            <ActivityIndicator size={"large"} color={"white"} />
+          ) : (
+            <FlatList
+              ref={movieListRef}
+              data={moviesData}
+              renderItem={({ item }) => (
+                <View style={styles.container}>
+                  <Card>
+                    <Movie
+                      title={item.original_title}
+                      releaseDate={item.release_date}
+                      onAddToFavorites={addToFavHandler}
+                      onAddToWishlist={addToWishListHandler}
+                      rate={item.vote_average}
+                      image={item.poster_path}
+                    />
+                  </Card>
+                </View>
+              )}
+              onEndReached={handleEndReached}
+              onEndReachedThreshold={0.3}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={(item, idx) => {
+                return item.id.toString() + idx;
+              }}
+              onViewableItemsChanged={onViewableItemChanged}
+              viewabilityConfig={viewabilityConfig.current}
+              onRefresh={() => fetchPreviousPage()}
+              refreshing={isFetchingPreviousPage}
+              contentContainerStyle={{ paddingBottom: 350 }} // Adjust paddingBottom as needed
+              ListFooterComponent={isFetchingNextPage ? renderSpinner : null}
+            />
+          )}
         </View>
       </View>
     </View>
@@ -82,6 +149,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginLeft: 10,
     color: Colors.primaryColor,
+  },
+  video: {
+    alignSelf: "center",
+    width: 320,
+    height: 200,
   },
 });
 

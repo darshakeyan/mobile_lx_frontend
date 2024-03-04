@@ -1,6 +1,7 @@
 import { UserAuthentication, UserDetailAuthentication } from "../types/auth";
 import {
   LOGOUT_FROM_ACCOUNT,
+  SET_MOVIE_ID_FROM_VIEW_PORT,
   SIGN_IN_ACCOUNT,
   SIGN_IN_ACCOUNT_SUCCESS,
   SIGN_UP_ACCOUNT,
@@ -61,5 +62,12 @@ export const signupToAccountError = (error: any) => {
   return {
     type: SIGN_UP_ACCOUNT_ERROR,
     error,
+  };
+};
+
+export const setMovieIdFromViewport = (movieId: string) => {
+  return {
+    type: SET_MOVIE_ID_FROM_VIEW_PORT,
+    movieId,
   };
 };

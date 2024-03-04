@@ -25,7 +25,7 @@ const Movie = ({
       <View style={styles.imageContainer}>
         <Image
           source={{
-            uri: image,
+            uri: `https://image.tmdb.org/t/p/original${image}`,
           }}
           style={styles.image}
           resizeMode="cover"
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 250,
+    height: 300,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },

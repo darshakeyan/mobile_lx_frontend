@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 10,
-    borderWidth: 0.3,
+    borderWidth: 0.6,
     borderColor: Colors.primaryColor,
     shadowOffset: {
       width: 0,
