@@ -24,11 +24,9 @@ import {
 import FilterModal from "../../components/FilterModal";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { sortByOptions } from "./mock/data";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { isFiltersEmpty } from "../../utils/helper";
 
 const Movies = () => {
-  const navigation = useNavigation<StackNavigationProp<any>>();
   // redux store
   const dispatch = useDispatch();
   const { movieId, sortByValue } = useSelector((state: any) => state.app);
@@ -52,9 +50,12 @@ const Movies = () => {
     fetchPreviousPage,
     isFetchingPreviousPage,
     hasNextPage,
-  } = useInfiniteMovies({
-    sortBy: sortByValue,
-  });
+  } = useInfiniteMovies(
+    isFiltersEmpty({
+      sortBy: sortByValue,
+      
+    })
+  );
 
   const { data: video, isLoading: isMovieVideoLoading } =
     useMovieTrailer(movieId);

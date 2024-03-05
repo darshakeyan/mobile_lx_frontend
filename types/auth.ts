@@ -8,3 +8,10 @@ export type UserDetailAuthentication = {
   email: string;
   password: string;
 };
+
+export type MovieFilters = {
+  withKeywords?: string;
+  withOriginalLanguage?: string;
+  withGenres?: string;
+  certification?: string;
+};

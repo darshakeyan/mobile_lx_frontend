@@ -1,5 +1,5 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   Pressable,
@@ -9,21 +9,24 @@ import {
   TouchableOpacity,
   Button,
   Text,
+  ActivityIndicator,
 } from "react-native";
 import { Colors } from "../../utils/colors";
 import SingleSelect from "../SingleSelect";
-import { useLanguages } from "../../service/auth";
+import { useGenres, useLanguages } from "../../service/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { logOutFromAccount, setFilters } from "../../redux/actions";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { setFilters } from "../../redux/actions";
+import Search from "../Search";
+import MultipleSelectList from "../MultiSelect";
+import { certification } from "../../screens/home/mock/data";
 
 const FilterModal = ({ visible, setVisible }: any) => {
-  const dispatch = useDispatch();
   const { filters } = useSelector((state: any) => state.app);
   const hide = () => setVisible(false);
 
   const { data } = useLanguages();
+  const { data: genres, isLoading: isGenresLoading } = useGenres();
+
   const languages = data?.data?.map((lang: any) => ({
     label: lang.english_name,
     value: lang.iso_639_1,
@@ -50,11 +53,12 @@ const FilterModal = ({ visible, setVisible }: any) => {
               />
             </TouchableOpacity>
 
-            <View style={{ marginRight:170  }}>
+            <View style={{ marginRight: 170 }}>
               <Text style={styles.text}>{"Filters "}</Text>
             </View>
           </View>
-
+          <Text style={styles.text}>Keywords</Text>
+          <Search />
           <SingleSelect
             data={languages}
             placeholder="Select Language"
@@ -63,14 +67,19 @@ const FilterModal = ({ visible, setVisible }: any) => {
             title="Language"
             allowSearch={true}
             selectSearchPlaceholder="Search for a Language"
-            onChange={setFilters}
           />
-          {/* Multiple Checkbox */}
           <Text style={styles.text}>Genres</Text>
-          {/* Multiple Checkbox */}
+          {isGenresLoading ? (
+            <ActivityIndicator size={"small"} color={"white"} />
+          ) : (
+            <MultipleSelectList
+              data={genres?.data?.genres}
+              onChange={setFilters}
+              mode="GENRES"
+            />
+          )}
           <Text style={styles.text}>Certifications</Text>
-          {/* Input Field */}
-          <Text style={styles.text}>Keywords</Text>
+          <MultipleSelectList data={certification} mode="CERTIFICATE" />
         </View>
       </SafeAreaView>
       <Button
@@ -90,7 +99,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   closeModal: {
-    height: 300,
+    height: 80,
     backgroundColor: Colors.primaryColor,
     opacity: 0.3,
   },

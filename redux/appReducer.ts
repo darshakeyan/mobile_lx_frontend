@@ -20,10 +20,9 @@ export const appReducers = (state = initialState, action: any) =>
       case SET_SORTBY_VALUE:
         draftState.sortByValue = action.value;
       case SET_FILTERS:
-        console.warn(action);
         draftState.filters = {
           ...draftState.filters,
-          language: action.filter.language,
+          language: action?.filter?.language,
         };
         break;
     }

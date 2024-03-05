@@ -26,13 +26,23 @@ export const getLanaguges = async () => {
   return data;
 };
 
+export const getGenres = async () => {
+  const data = await API.get(`genre/movie/list`);
+  return data;
+};
+
+export const getKeywords = async (keyword: string) => {
+  const data = await API.get(`search/keyword?query=${keyword}`);
+  return data;
+};
+
 export const movieList = ({
   pageParam = 1,
   queryKey,
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
   if (typeof queryKey[1] === "object") {
     return API.get(
-      `discover/movie?page=${pageParam}&sort_by=${queryKey[1]?.sortBy}`
+      `discover/movie?page=${pageParam}&sort_by=${queryKey[1]?.sortBy}`,
     );
   } else return API.get(pageParam);
 };
@@ -73,6 +83,22 @@ export const useLanguages = () => {
   return useQuery({
     queryKey: ["languages"],
     queryFn: getLanaguges,
+    staleTime: 15 * 60 * 1000,
+  });
+};
+
+export const useGenres = () => {
+  return useQuery({
+    queryKey: ["genres"],
+    queryFn: getGenres,
+    staleTime: 15 * 60 * 1000,
+  });
+};
+
+export const useKeywords = (keyword: string) => {
+  return useQuery({
+    queryKey: ["keywords", keyword],
+    queryFn: () => getKeywords(keyword),
     staleTime: 15 * 60 * 1000,
   });
 };

@@ -4,7 +4,6 @@ import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Colors } from "../../utils/colors";
 import { useDispatch } from "react-redux";
-import { setSortByValue } from "../../redux/actions";
 
 const SingleSelect = ({
   data,
@@ -13,7 +12,8 @@ const SingleSelect = ({
   title,
   allowSearch,
   selectSearchPlaceholder = "",
-  onChange,
+  onChange = () => {},
+  setLanguage,
   mode = "",
 }: any) => {
   const dispatch = useDispatch();
@@ -45,10 +45,9 @@ const SingleSelect = ({
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item: any) => {
-          console.warn(item.value);
           mode === "SORTBY"
             ? dispatch(onChange(item.value))
-            : dispatch(onChange({ language: item.value }));
+            : setLanguage(item.value);
           setIsFocus(false);
         }}
         renderLeftIcon={() => (

@@ -26,3 +26,18 @@ export const sortByOptions = [
 ];
 
 export const languages = [{}];
+
+export const certification = [
+  {
+    id: 1,
+    name: "U",
+  },
+  {
+    id: 2,
+    name: "UA",
+  },
+  {
+    id: 3,
+    name: "A",
+  },
+];
