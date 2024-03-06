@@ -4,6 +4,7 @@ import {
   useInfiniteQuery,
   useQuery,
 } from "@tanstack/react-query";
+import { isFiltersEmpty } from "../utils/helper";
 
 const BASE_API_URL = "https://api.themoviedb.org/3/";
 
@@ -40,11 +41,24 @@ export const movieList = ({
   pageParam = 1,
   queryKey,
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
+  // sorting and filtering has to be fixed
   if (typeof queryKey[1] === "object") {
-    return API.get(
-      `discover/movie?page=${pageParam}&sort_by=${queryKey[1]?.sortBy}`,
-    );
-  } else return API.get(pageParam);
+    const filter = isFiltersEmpty(queryKey[1]?.filterBy);
+    const queryParams = {
+      sort_by: queryKey[1]?.sortBy,
+      with_keywords: filter?.keywords,
+      with_original_language: filter?.language,
+      with_genres: filter?.genres,
+      certification: filter?.certification,
+    };
+    const queryString = Object.entries(queryParams)
+      .filter(
+        ([_, value]) => value !== undefined && value !== null && value !== ""
+      )
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&");
+    return API.get(`discover/movie?${queryString}`);
+  } else return API.get(`discover/movie?page=${pageParam}`);
 };
 
 export const useInfiniteMovies = (q?: Record<string, any>) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 
@@ -7,16 +7,20 @@ interface IGenres {
   name: string;
 }
 
-const MultipleSelect = ({ data, onChange, setValues }: any) => {
-  const dispatch = useDispatch();
+const MultipleSelect = ({ data, onChange }: any) => {
   const [selectedItems, setSelectedItems] = useState<IGenres[]>([]);
   const toggleSelection = (item: IGenres) => {
-    if (selectedItems.find((i) => i.id === item.id)) {
-      setSelectedItems(selectedItems.filter((i) => i.id !== item.id));
-    } else {
-      setSelectedItems([...selectedItems, item]);
-    }
+    setSelectedItems((prevSelectedItems) => {
+      if (prevSelectedItems.find((i) => i.id === item.id)) {
+        return prevSelectedItems.filter((i) => i.id !== item.id);
+      } else {
+        return [...prevSelectedItems, item];
+      }
+    });
   };
+  useEffect(() => {
+    onChange(selectedItems);
+  }, [selectedItems, onChange]);
   return (
     <View style={styles.container}>
       {data.map((item: IGenres) => (
@@ -28,10 +32,9 @@ const MultipleSelect = ({ data, onChange, setValues }: any) => {
           ]}
           onPress={() => {
             toggleSelection(item);
-            setValues(selectedItems);
           }}
         >
-          <Text style={{ color: "white" }}>{item.name}</Text>
+          <Text style={{ color: "white" }}>{`${item.name}  `}</Text>
         </TouchableOpacity>
       ))}
     </View>

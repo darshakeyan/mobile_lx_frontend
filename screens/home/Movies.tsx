@@ -18,6 +18,7 @@ import { useInfiniteMovies, useMovieTrailer } from "../../service/auth";
 import { useDispatch, useSelector } from "react-redux";
 import {
   logOutFromAccount,
+  setFilters,
   setMovieIdFromViewport,
   setSortByValue,
 } from "../../redux/actions";
@@ -25,11 +26,19 @@ import FilterModal from "../../components/FilterModal";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { sortByOptions } from "./mock/data";
 import { isFiltersEmpty } from "../../utils/helper";
+import { IGenres } from "../../types/auth";
 
 const Movies = () => {
+  const [keywords, setKeywords] = useState<any>([]);
+  const [language, setLanguage] = useState<any>(null);
+  const [genresItems, setGenresItems] = useState<IGenres[]>([]);
+  const [certificationItems, setCertificationsItems] = useState<IGenres[]>([]);
+
   // redux store
   const dispatch = useDispatch();
-  const { movieId, sortByValue } = useSelector((state: any) => state.app);
+  const { movieId, sortByValue, filters } = useSelector(
+    (state: any) => state.app
+  );
 
   // local store
   const [modalVisible, setModalVisible] = useState(false);
@@ -50,13 +59,10 @@ const Movies = () => {
     fetchPreviousPage,
     isFetchingPreviousPage,
     hasNextPage,
-  } = useInfiniteMovies(
-    isFiltersEmpty({
-      sortBy: sortByValue,
-      
-    })
-  );
-
+  } = useInfiniteMovies({
+    sortBy: sortByValue,
+    filterBy: filters?.filters,
+  });
   const { data: video, isLoading: isMovieVideoLoading } =
     useMovieTrailer(movieId);
 
@@ -69,7 +75,6 @@ const Movies = () => {
       }
     });
   });
-
   // infinite scrolling
   const handleEndReached = () => {
     if (hasNextPage) {
@@ -128,7 +133,20 @@ const Movies = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <FilterModal visible={modalVisible} setVisible={setModalVisible} />
+
+        <FilterModal
+          visible={modalVisible}
+          setVisible={setModalVisible}
+          keywords={keywords}
+          setKeywords={setKeywords}
+          language={language}
+          setLanguage={setLanguage}
+          genresItems={genresItems}
+          setGenresItems={setGenresItems}
+          certificationItems={certificationItems}
+          setCertificationsItems={setCertificationsItems}
+        />
+
         <SingleSelect
           data={sortByOptions}
           placeholder="Select Sort By Option"
@@ -160,7 +178,7 @@ const Movies = () => {
                 </View>
               )}
               onEndReached={handleEndReached}
-              onEndReachedThreshold={0.3}
+              onEndReachedThreshold={0.6}
               showsVerticalScrollIndicator={false}
               keyExtractor={(item, idx) => {
                 return item.id.toString() + idx;
@@ -169,7 +187,7 @@ const Movies = () => {
               viewabilityConfig={viewabilityConfig.current}
               onRefresh={() => fetchPreviousPage()}
               refreshing={isFetchingPreviousPage}
-              contentContainerStyle={{ paddingBottom: 350 }}
+              contentContainerStyle={{ paddingBottom: 700 }}
               ListFooterComponent={isFetchingNextPage ? renderSpinner : null}
             />
           )}

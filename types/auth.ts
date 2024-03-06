@@ -15,3 +15,8 @@ export type MovieFilters = {
   withGenres?: string;
   certification?: string;
 };
+
+export interface IGenres {
+  id: number;
+  name: string;
+}

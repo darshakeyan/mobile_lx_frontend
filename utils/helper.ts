@@ -8,6 +8,14 @@ export const isValidPassword = (password: string) => {
   return passRegex.test(password);
 };
 
+export const transformArrayToStringById = (array: { id: number }[]) => {
+  return array.map((item: { id: number }) => item.id).join("|");
+};
+
+export const transformArrayToStringByName = (array: { name: number }[]) => {
+  return array.map((item: { name: number }) => item.name).join("|");
+};
+
 export const isFiltersEmpty = <T extends Record<string, any>>(
   filters: T
 ): Partial<T> => {

@@ -13,7 +13,6 @@ const SingleSelect = ({
   allowSearch,
   selectSearchPlaceholder = "",
   onChange = () => {},
-  setLanguage,
   mode = "",
 }: any) => {
   const dispatch = useDispatch();
@@ -47,7 +46,7 @@ const SingleSelect = ({
         onChange={(item: any) => {
           mode === "SORTBY"
             ? dispatch(onChange(item.value))
-            : setLanguage(item.value);
+            : onChange(item.value);
           setIsFocus(false);
         }}
         renderLeftIcon={() => (

@@ -10,27 +10,56 @@ import {
   Button,
   Text,
   ActivityIndicator,
+  ScrollView
 } from "react-native";
 import { Colors } from "../../utils/colors";
 import SingleSelect from "../SingleSelect";
-import { useGenres, useLanguages } from "../../service/auth";
+import { useGenres, useKeywords, useLanguages } from "../../service/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { setFilters } from "../../redux/actions";
-import Search from "../Search";
 import MultipleSelectList from "../MultiSelect";
 import { certification } from "../../screens/home/mock/data";
+import {
+  transformArrayToStringById,
+  transformArrayToStringByName,
+} from "../../utils/helper";
+import MultiSelectDropdown from "../MultiSelectDropdown";
+import { useDebounce } from "../../hooks/useDebounce";
 
-const FilterModal = ({ visible, setVisible }: any) => {
+const FilterModal = ({
+  visible,
+  setVisible,
+  keywords,
+  setKeywords,
+  language,
+  setLanguage,
+  genresItems,
+  setGenresItems,
+  certificationItems,
+  setCertificationsItems,
+}: any) => {
+  const dispatch = useDispatch();
   const { filters } = useSelector((state: any) => state.app);
-  const hide = () => setVisible(false);
-
+  const [keywordSearchQuery, setKeywordSearchQuery] = useState<string>("");
+  const debouncedSearchValue = useDebounce(keywordSearchQuery || "", 500);
   const { data } = useLanguages();
+  const { data: keywordsData, isLoading: isKeywordsLoading } = useKeywords("m");
   const { data: genres, isLoading: isGenresLoading } = useGenres();
 
   const languages = data?.data?.map((lang: any) => ({
     label: lang.english_name,
     value: lang.iso_639_1,
   }));
+
+  const transformedKeywords = keywordsData?.data?.results?.map(
+    (keyword: { id: any; name: any }) => ({
+      id: keyword.id,
+      label: keyword.name,
+      value: keyword.name,
+    })
+  );
+
+  const hide = () => setVisible(false);
 
   return (
     <Modal
@@ -57,35 +86,55 @@ const FilterModal = ({ visible, setVisible }: any) => {
               <Text style={styles.text}>{"Filters "}</Text>
             </View>
           </View>
-          <Text style={styles.text}>Keywords</Text>
-          <Search />
-          <SingleSelect
-            data={languages}
-            placeholder="Select Language"
-            value={filters.language}
-            mode="FILTERBY"
-            title="Language"
-            allowSearch={true}
-            selectSearchPlaceholder="Search for a Language"
-          />
-          <Text style={styles.text}>Genres</Text>
-          {isGenresLoading ? (
-            <ActivityIndicator size={"small"} color={"white"} />
-          ) : (
-            <MultipleSelectList
-              data={genres?.data?.genres}
-              onChange={setFilters}
-              mode="GENRES"
+          <ScrollView>
+            <Text style={styles.text}>Keywords</Text>
+            <MultiSelectDropdown
+              data={transformedKeywords}
+              onChange={setKeywords}
+              setKeywordSearchQuery={setKeywordSearchQuery}
+              keywords={keywords}
             />
-          )}
-          <Text style={styles.text}>Certifications</Text>
-          <MultipleSelectList data={certification} mode="CERTIFICATE" />
+            <SingleSelect
+              data={languages}
+              placeholder="Select Language"
+              value={language}
+              mode="FILTERBY"
+              title="Language"
+              allowSearch={true}
+              selectSearchPlaceholder="Search for a Language"
+              onChange={setLanguage}
+            />
+            <Text style={styles.text}>Genres</Text>
+            {isGenresLoading ? (
+              <ActivityIndicator size={"small"} color={"white"} />
+            ) : (
+              <MultipleSelectList
+                data={genres?.data?.genres}
+                mode="GENRES"
+                onChange={setGenresItems}
+                values={genresItems}
+              />
+            )}
+            <Text style={styles.text}>Certifications</Text>
+            <MultipleSelectList
+              data={certification}
+              mode="CERTIFICATE"
+              onChange={setCertificationsItems}
+              values={certificationItems}
+            />
+          </ScrollView>
         </View>
       </SafeAreaView>
       <Button
         title="Apply"
         onPress={() => {
-          // send params to an API
+          const filters = {
+            keywords: keywords?.join("|"),
+            language: language,
+            genres: transformArrayToStringById(genresItems),
+            certification: transformArrayToStringByName(certificationItems),
+          };
+          dispatch(setFilters(filters));
           hide();
         }}
       />
@@ -94,7 +143,8 @@ const FilterModal = ({ visible, setVisible }: any) => {
 };
 
 const styles = StyleSheet.create({
-  modal: {},
+  modal: {
+  },
   container: {
     flex: 1,
   },
