@@ -19,8 +19,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   logOutFromAccount,
   setFilters,
-  setMovieIdFromViewport,
-  setSortByValue,
 } from "../../redux/actions";
 import FilterModal from "../../components/FilterModal";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -29,7 +27,6 @@ import { isFiltersEmpty } from "../../utils/helper";
 import { IGenres } from "../../types/auth";
 
 const Movies = () => {
-  console.log("called");
   const [keywords, setKeywords] = useState<any>([]);
   const [language, setLanguage] = useState<any>(null);
   const [genresItems, setGenresItems] = useState<IGenres[]>([]);
