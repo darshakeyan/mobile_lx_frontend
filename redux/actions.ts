@@ -81,9 +81,10 @@ export const setSortByValue = (value: string) => {
   };
 };
 
-export const setFilters = (filter: any) => {
+export const setFilters = (filter: any, sortBy: string) => {
   return {
     type: SET_FILTERS,
     filter,
+    sortBy,
   };
 };

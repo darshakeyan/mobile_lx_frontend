@@ -1,5 +1,5 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -10,7 +10,7 @@ import {
   Button,
   Text,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import { Colors } from "../../utils/colors";
 import SingleSelect from "../SingleSelect";
@@ -39,7 +39,7 @@ const FilterModal = ({
   setCertificationsItems,
 }: any) => {
   const dispatch = useDispatch();
-  const { filters } = useSelector((state: any) => state.app);
+  const { sortByValue, filters } = useSelector((state: any) => state.app);
   const [keywordSearchQuery, setKeywordSearchQuery] = useState<string>("");
   const debouncedSearchValue = useDebounce(keywordSearchQuery || "", 500);
   const { data } = useLanguages();
@@ -128,13 +128,17 @@ const FilterModal = ({
       <Button
         title="Apply"
         onPress={() => {
-          const filters = {
-            keywords: keywords?.join("|"),
-            language: language,
-            genres: transformArrayToStringById(genresItems),
-            certification: transformArrayToStringByName(certificationItems),
-          };
-          dispatch(setFilters(filters));
+          dispatch(
+            setFilters(
+              {
+                keywords: keywords?.join("|"),
+                language: language,
+                genres: transformArrayToStringById(genresItems),
+                certification: transformArrayToStringByName(certificationItems),
+              },
+              sortByValue
+            )
+          );
           hide();
         }}
       />
@@ -143,8 +147,7 @@ const FilterModal = ({
 };
 
 const styles = StyleSheet.create({
-  modal: {
-  },
+  modal: {},
   container: {
     flex: 1,
   },
@@ -176,4 +179,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FilterModal;
+export default memo(FilterModal);

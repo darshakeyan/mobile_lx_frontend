@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Text,
@@ -29,6 +29,7 @@ import { isFiltersEmpty } from "../../utils/helper";
 import { IGenres } from "../../types/auth";
 
 const Movies = () => {
+  console.log("called");
   const [keywords, setKeywords] = useState<any>([]);
   const [language, setLanguage] = useState<any>(null);
   const [genresItems, setGenresItems] = useState<IGenres[]>([]);
@@ -59,10 +60,8 @@ const Movies = () => {
     fetchPreviousPage,
     isFetchingPreviousPage,
     hasNextPage,
-  } = useInfiniteMovies({
-    sortBy: sortByValue,
-    filterBy: filters?.filters,
-  });
+  } = useInfiniteMovies({ sortByValue });
+
   const { data: video, isLoading: isMovieVideoLoading } =
     useMovieTrailer(movieId);
 
@@ -75,27 +74,33 @@ const Movies = () => {
       }
     });
   });
+
   // infinite scrolling
-  const handleEndReached = () => {
+  const handleEndReached = useCallback(() => {
     if (hasNextPage) {
       fetchNextPage();
     }
-  };
+  }, [hasNextPage, fetchNextPage]);
+
   const renderSpinner = () => {
     return <ActivityIndicator color="white" size={"large"} />;
   };
 
   // defining view port
   // research -> youtube video link doesn't support
-  const onViewableItemChanged = ({ viewableItems }: any) => {
-    if (viewableItems.length === 1) {
-      const movieId = viewableItems[0]?.item.id.toString();
-      dispatch(setMovieIdFromViewport(movieId));
-      // play the video
-    } else {
-      // pause the video
-    }
-  };
+
+  const onViewableItemChanged = useCallback(
+    ({ viewableItems }: any) => {
+      if (viewableItems.length === 1) {
+        // const movieId = viewableItems[0]?.item.id.toString();
+        // dispatch(setMovieIdFromViewport(movieId));
+        // play the video
+      } else {
+        // pause the video
+      }
+    },
+    [dispatch]
+  );
 
   const show = () => setModalVisible(true);
 
@@ -153,7 +158,7 @@ const Movies = () => {
           value={sortByValue}
           title="Sort Results By"
           allowSearch={false}
-          onChange={setSortByValue}
+          onChange={setFilters}
           mode="SORTBY"
         />
 
@@ -215,7 +220,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Movies;
+export default memo(Movies);
 
 // action used and called in UI along with the data required by action itself.
 

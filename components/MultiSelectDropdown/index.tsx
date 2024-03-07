@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -49,7 +49,7 @@ const MultiSelectDropdown = ({
             size={22}
           />
         )}
-        selectedTextStyle={{color:'#008080'}}
+        selectedTextStyle={{ color: "#008080" }}
         selectedStyle={styles.selectedStyle}
       />
     </View>
@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: "white",
     paddingHorizontal: 8,
-    borderRadius:10,
-    marginBottom: 10
+    borderRadius: 10,
+    marginBottom: 10,
   },
   placeholderStyle: {
     fontSize: 14,
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   selectedStyle: {
     borderRadius: 12,
-    color:'white'
+    color: "white",
   },
   item: {
     padding: 17,
@@ -98,4 +98,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MultiSelectDropdown;
+export default memo(MultiSelectDropdown);

@@ -4,7 +4,8 @@ import {
   useInfiniteQuery,
   useQuery,
 } from "@tanstack/react-query";
-import { isFiltersEmpty } from "../utils/helper";
+import { useMemo } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BASE_API_URL = "https://api.themoviedb.org/3/";
 
@@ -41,29 +42,37 @@ export const movieList = ({
   pageParam = 1,
   queryKey,
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
-  // sorting and filtering has to be fixed
-  if (typeof queryKey[1] === "object") {
-    const filter = isFiltersEmpty(queryKey[1]?.filterBy);
-    const queryParams = {
-      sort_by: queryKey[1]?.sortBy,
-      with_keywords: filter?.keywords,
-      with_original_language: filter?.language,
-      with_genres: filter?.genres,
-      certification: filter?.certification,
-    };
-    const queryString = Object.entries(queryParams)
-      .filter(
-        ([_, value]) => value !== undefined && value !== null && value !== ""
-      )
-      .map(([key, value]) => `${key}=${value}`)
-      .join("&");
-    return API.get(`discover/movie?${queryString}`);
-  } else return API.get(`discover/movie?page=${pageParam}`);
+  try {
+    if (typeof queryKey[1] === "object") {
+      // const filter = queryKey[1]?.filters;
+      const queryParams = {
+        sort_by: queryKey[1]?.sortByValue,
+        // with_keywords: filter?.keywords,
+        // with_original_language: filter?.language,
+        // with_genres: filter?.genres,
+        // certification: filter?.certification,
+      };
+      const queryString = Object.entries(queryParams)
+        .filter(
+          ([_, value]) => value !== undefined && value !== null && value !== ""
+        )
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&");
+      const response = API.get(`discover/movie?${queryString}`);
+      console.warn(response);
+      // await AsyncStorage.setItem("movieData", JSON.stringify(response.data));
+      return response ;
+    } else return API.get(`discover/movie?page=${pageParam}`);
+  } catch (error) {
+    console.error("Error fetching movie data:", error);
+    throw new Error("Failed to fetch movie data");
+  }
 };
 
 export const useInfiniteMovies = (q?: Record<string, any>) => {
+  const queryKey = useMemo(() => ["movies", q], [q]);
   return useInfiniteQuery({
-    queryKey: ["movies", q],
+    queryKey: queryKey,
     queryFn: movieList,
     getNextPageParam: (lastPage: any) => {
       const pageDataLen = lastPage?.data?.results?.length;

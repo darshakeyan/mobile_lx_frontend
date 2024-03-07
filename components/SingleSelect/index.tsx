@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Colors } from "../../utils/colors";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const SingleSelect = ({
   data,
@@ -16,6 +16,7 @@ const SingleSelect = ({
   mode = "",
 }: any) => {
   const dispatch = useDispatch();
+  const { filters } = useSelector((state: any) => state.app);
   const [isFocus, setIsFocus] = useState(false);
   return (
     <View style={styles.container}>
@@ -45,7 +46,7 @@ const SingleSelect = ({
         onBlur={() => setIsFocus(false)}
         onChange={(item: any) => {
           mode === "SORTBY"
-            ? dispatch(onChange(item.value))
+            ? dispatch(onChange(filters?.filters, item.value))
             : onChange(item.value);
           setIsFocus(false);
         }}

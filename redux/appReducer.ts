@@ -7,13 +7,8 @@ import {
 
 export const initialState: any = {
   movieId: "",
-  sortByValue: "",
-  filters: {
-    keyword: "",
-    language: "",
-    genres: "",
-    certification: "",
-  },
+  filters: {},
+  sortByValue: null,
 };
 
 export const appReducers = (state = initialState, action: any) =>
@@ -25,9 +20,8 @@ export const appReducers = (state = initialState, action: any) =>
       case SET_SORTBY_VALUE:
         draftState.sortByValue = action.value;
       case SET_FILTERS:
-        draftState.filters = {
-          filters: action.filter,
-        };
+        draftState.sortByValue = action.sortBy;
+        draftState.filters = action.filter;
         break;
     }
   });

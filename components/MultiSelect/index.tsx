@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 
@@ -60,4 +60,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MultipleSelect;
+export default memo(MultipleSelect);
