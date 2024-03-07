@@ -60,7 +60,7 @@ const Movies = () => {
     fetchPreviousPage,
     isFetchingPreviousPage,
     hasNextPage,
-  } = useInfiniteMovies({ sortByValue });
+  } = useInfiniteMovies({ sortByValue, filters });
 
   const { data: video, isLoading: isMovieVideoLoading } =
     useMovieTrailer(movieId);

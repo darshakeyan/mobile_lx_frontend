@@ -43,14 +43,15 @@ export const movieList = ({
   queryKey,
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
   try {
-    if (typeof queryKey[1] === "object") {
-      // const filter = queryKey[1]?.filters;
+    console.warn(queryKey[1])
+    if (typeof queryKey[1] === "object" && queryKey[1]?.filters) {
+      const filter = queryKey[1]?.filters;
       const queryParams = {
         sort_by: queryKey[1]?.sortByValue,
         // with_keywords: filter?.keywords,
-        // with_original_language: filter?.language,
-        // with_genres: filter?.genres,
-        // certification: filter?.certification,
+        with_original_language: filter?.language,
+        with_genres: filter?.genres,
+        certification: filter?.certification,
       };
       const queryString = Object.entries(queryParams)
         .filter(
@@ -59,9 +60,8 @@ export const movieList = ({
         .map(([key, value]) => `${key}=${value}`)
         .join("&");
       const response = API.get(`discover/movie?${queryString}`);
-      console.warn(response);
       // await AsyncStorage.setItem("movieData", JSON.stringify(response.data));
-      return response ;
+      return response;
     } else return API.get(`discover/movie?page=${pageParam}`);
   } catch (error) {
     console.error("Error fetching movie data:", error);
