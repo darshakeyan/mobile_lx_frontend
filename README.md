@@ -8,11 +8,3 @@
 
 4. App will be start if not try reloading
 
-
-### Pending Work
-
-1. Filters 
-
-2. Offline Mode 
-
-3. AutoPlay Trailer on Viewport (Viewport code has been done just that youtube link isn't supported to play a video by library)
