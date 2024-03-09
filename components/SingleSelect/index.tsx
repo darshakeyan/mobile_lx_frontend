@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -45,9 +45,10 @@ const SingleSelect = ({
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item: any) => {
-          mode === "SORTBY"
-            ? dispatch(onChange(filters?.filters, item.value))
-            : onChange(item.value);
+          console.log(item);
+          if (mode === "SORTBY") {
+            dispatch(onChange(filters?.filters, item));
+          } else onChange(item);
           setIsFocus(false);
         }}
         renderLeftIcon={() => (
@@ -99,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SingleSelect;
+export default memo(SingleSelect);

@@ -9,43 +9,28 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
-
 import SingleSelect from "../../components/SingleSelect";
 import Movie from "../../components/Movie";
 import Card from "../../components/Card";
 import { Colors } from "../../utils/colors";
-import { useInfiniteMovies, useMovieTrailer } from "../../service/auth";
+import { useGenres, useInfiniteMovies, useLanguages } from "../../service/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { logOutFromAccount, setFilters } from "../../redux/actions";
 import FilterModal from "../../components/FilterModal";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { sortByOptions } from "./mock/data";
-import { isFiltersEmpty } from "../../utils/helper";
 import { IGenres } from "../../types/auth";
 
 const Movies = () => {
-  // const [keywords, setKeywords] = useState<any>([]);
+  const dispatch = useDispatch();
+
   const [language, setLanguage] = useState<any>(null);
   const [genresItems, setGenresItems] = useState<IGenres[]>([]);
   const [certificationItems, setCertificationsItems] = useState<IGenres[]>([]);
-
-  // redux store
-  const dispatch = useDispatch();
-  const { movieId, sortByValue, filters } = useSelector(
-    (state: any) => state.app
-  );
-
-  // local store
+  
   const [modalVisible, setModalVisible] = useState(false);
 
-  // reference
-  const movieListRef = useRef(null);
-  const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 100,
-    waitForInteraction: true,
-  });
-
-  // API data
+  const { sortByValue, filters } = useSelector((state: any) => state.app);
   const {
     data,
     isLoading,
@@ -54,11 +39,7 @@ const Movies = () => {
     fetchPreviousPage,
     isFetchingPreviousPage,
     hasNextPage,
-  } = useInfiniteMovies(sortByValue, { ...filters });
-
-  // const { data: video, isLoading: isMovieVideoLoading } =
-  //   useMovieTrailer(movieId);
-
+  } = useInfiniteMovies(sortByValue, filters);
   const moviesData = data?.pages.flatMap((page) => {
     return page?.data?.results?.map((movie: any) => {
       try {
@@ -68,35 +49,23 @@ const Movies = () => {
       }
     });
   });
+  const { data: languages } = useLanguages();
+  const languagesData = languages?.data?.map((lang: any) => ({
+    label: lang.english_name,
+    value: lang.iso_639_1,
+  }));
+  const { data: genres } = useGenres();
 
-  // infinite scrolling
   const handleEndReached = useCallback(() => {
     if (hasNextPage) {
       fetchNextPage();
     }
   }, [hasNextPage, fetchNextPage]);
-
   const renderSpinner = () => {
     return <ActivityIndicator color="white" size={"large"} />;
   };
-
-  // defining view port
-  // research -> youtube video link doesn't support
-
-  const onViewableItemChanged = useCallback(
-    ({ viewableItems }: any) => {
-      if (viewableItems.length === 1) {
-        // const movieId = viewableItems[0]?.item.id.toString();
-        // dispatch(setMovieIdFromViewport(movieId));
-        // play the video
-      } else {
-        // pause the video
-      }
-    },
-    [dispatch]
-  );
-
   const show = () => setModalVisible(true);
+  const hide = () => setModalVisible(false);
 
   return (
     <View className="bg-[#0b0404] px-2 h-full w-full">
@@ -133,18 +102,20 @@ const Movies = () => {
           </View>
         </View>
 
-        <FilterModal
-          visible={modalVisible}
-          setVisible={setModalVisible}
-          // keywords={keywords}
-          // setKeywords={setKeywords}
-          language={language}
-          setLanguage={setLanguage}
-          genresItems={genresItems}
-          setGenresItems={setGenresItems}
-          certificationItems={certificationItems}
-          setCertificationsItems={setCertificationsItems}
-        />
+        {modalVisible && (
+          <FilterModal
+            visible={modalVisible}
+            hide={hide}
+            language={language}
+            setLanguage={setLanguage}
+            languagesData={languagesData}
+            genresItems={genresItems}
+            setGenresItems={setGenresItems}
+            genresData={genres}
+            certificationItems={certificationItems}
+            setCertificationsItems={setCertificationsItems}
+          />
+        )}
 
         <SingleSelect
           data={sortByOptions}
@@ -156,13 +127,17 @@ const Movies = () => {
           mode="SORTBY"
         />
 
+        <View>
+          <Text style={{ color: "white" }}>{sortByValue?.label}</Text>
+          <Text style={{ color: "white" }}>{language?.label}</Text>
+        </View>
+
         <View style={styles.movieContainer}>
           <Text style={styles.movieTitle}>Movies</Text>
           {isLoading ? (
             <ActivityIndicator size={"large"} color={"white"} />
           ) : (
             <FlatList
-              ref={movieListRef}
               data={moviesData}
               renderItem={({ item }) => (
                 <View style={styles.container}>
@@ -182,8 +157,6 @@ const Movies = () => {
               keyExtractor={(item, idx) => {
                 return item.id.toString() + idx;
               }}
-              onViewableItemsChanged={onViewableItemChanged}
-              viewabilityConfig={viewabilityConfig.current}
               onRefresh={() => fetchPreviousPage()}
               refreshing={isFetchingPreviousPage}
               contentContainerStyle={{ paddingBottom: 700 }}

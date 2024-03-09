@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { useMemo } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { transformArrayToStringById, transformArrayToStringByName } from "../utils/helper";
 
 const BASE_API_URL = "https://api.themoviedb.org/3/";
 
@@ -43,18 +44,16 @@ export const movieList = ({
   queryKey,
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
   try {
-    console.warn(queryKey[1]);
     if (
       typeof queryKey[1] === "object" &&
       (queryKey[1]?.filters || queryKey[1]?.sortByValue)
     ) {
       const filter = queryKey[1]?.filters;
       const queryParams = {
-        sort_by: queryKey[1]?.sortByValue,
-        // with_keywords: filter?.keywords,
-        with_original_language: filter?.language,
-        with_genres: filter?.genres,
-        certification: filter?.certification,
+        sort_by: queryKey[1]?.sortByValue?.value,
+        with_original_language: filter?.language?.value,
+        with_genres: transformArrayToStringById(filter?.genres),
+        certification: transformArrayToStringByName(filter?.certification),
       };
       const queryString = Object.entries(queryParams)
         .filter(

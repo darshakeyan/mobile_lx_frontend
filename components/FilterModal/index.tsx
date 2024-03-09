@@ -1,5 +1,5 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
-import React, { memo, useState } from "react";
+import React, { memo, useCallback } from "react";
 import {
   Modal,
   Pressable,
@@ -9,57 +9,41 @@ import {
   TouchableOpacity,
   Button,
   Text,
-  ActivityIndicator,
   ScrollView,
 } from "react-native";
 import { Colors } from "../../utils/colors";
 import SingleSelect from "../SingleSelect";
-import { useGenres, useKeywords, useLanguages } from "../../service/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { setFilters } from "../../redux/actions";
 import MultipleSelectList from "../MultiSelect";
 import { certification } from "../../screens/home/mock/data";
-import {
-  transformArrayToStringById,
-  transformArrayToStringByName,
-} from "../../utils/helper";
-// import MultiSelectDropdown from "../MultiSelectDropdown";
-import { useDebounce } from "../../hooks/useDebounce";
 
 const FilterModal = ({
   visible,
-  setVisible,
-  // keywords,
-  // setKeywords,
+  hide,
   language,
   setLanguage,
+  languagesData,
   genresItems,
   setGenresItems,
+  genresData,
   certificationItems,
   setCertificationsItems,
 }: any) => {
   const dispatch = useDispatch();
-  const { sortByValue, filters } = useSelector((state: any) => state.app);
-  // const [keywordSearchQuery, setKeywordSearchQuery] = useState<string>("");
-  // const debouncedSearchValue = useDebounce(keywordSearchQuery || "", 500);
-  const { data } = useLanguages();
-  const { data: keywordsData, isLoading: isKeywordsLoading } = useKeywords("m");
-  const { data: genres, isLoading: isGenresLoading } = useGenres();
-
-  const languages = data?.data?.map((lang: any) => ({
-    label: lang.english_name,
-    value: lang.iso_639_1,
-  }));
-
-  const transformedKeywords = keywordsData?.data?.results?.map(
-    (keyword: { id: any; name: any }) => ({
-      id: keyword.id,
-      label: keyword.name,
-      value: keyword.name,
-    })
-  );
-
-  const hide = () => setVisible(false);
+  const { sortByValue } = useSelector((state: any) => state.app);
+  const applyFiltersHandler = useCallback(() => {
+    dispatch(
+      setFilters(
+        {
+          language: language,
+          genres: genresItems,
+          certification: certificationItems,
+        },
+        sortByValue
+      )
+    );
+  }, [dispatch, language, genresItems, certificationItems, sortByValue]);
 
   return (
     <Modal
@@ -81,21 +65,13 @@ const FilterModal = ({
                 style={{ fontWeight: "800" }}
               />
             </TouchableOpacity>
-
             <View style={{ marginRight: 170 }}>
               <Text style={styles.text}>{"Filters "}</Text>
             </View>
           </View>
           <ScrollView>
-            {/* <Text style={styles.text}>Keywords</Text>
-            <MultiSelectDropdown
-              data={transformedKeywords}
-              onChange={setKeywords}
-              setKeywordSearchQuery={setKeywordSearchQuery}
-              keywords={keywords}
-            /> */}
             <SingleSelect
-              data={languages}
+              data={languagesData}
               placeholder="Select Language"
               value={language}
               mode="FILTERBY"
@@ -105,43 +81,29 @@ const FilterModal = ({
               onChange={setLanguage}
             />
             <Text style={styles.text}>Genres</Text>
-            {isGenresLoading ? (
-              <ActivityIndicator size={"small"} color={"white"} />
-            ) : (
-              <MultipleSelectList
-                data={genres?.data?.genres}
-                mode="GENRES"
-                onChange={setGenresItems}
-                values={genresItems}
-              />
-            )}
+            <MultipleSelectList
+              data={genresData?.data?.genres}
+              onChange={setGenresItems}
+              selectedData={genresItems}
+            />
             <Text style={styles.text}>Certifications</Text>
             <MultipleSelectList
               data={certification}
-              mode="CERTIFICATE"
               onChange={setCertificationsItems}
-              values={certificationItems}
+              selectedData={certificationItems}
             />
+            <TouchableOpacity
+              onPress={() => {
+                applyFiltersHandler();
+                hide();
+              }}
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>Apply Filters</Text>
+            </TouchableOpacity>
           </ScrollView>
         </View>
       </SafeAreaView>
-      <Button
-        title="Apply"
-        onPress={() => {
-          dispatch(
-            setFilters(
-              {
-                // keywords: keywords?.join("|"),
-                language: language,
-                genres: transformArrayToStringById(genresItems),
-                certification: transformArrayToStringByName(certificationItems),
-              },
-              sortByValue
-            )
-          );
-          hide();
-        }}
-      />
     </Modal>
   );
 };
@@ -152,7 +114,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   closeModal: {
-    height: 80,
+    height: 180,
     backgroundColor: Colors.primaryColor,
     opacity: 0.3,
   },
@@ -176,6 +138,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
+  },
+  button: {
+    backgroundColor: "#E19133",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

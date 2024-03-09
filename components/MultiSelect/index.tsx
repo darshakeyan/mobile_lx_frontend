@@ -1,14 +1,15 @@
 import React, { memo, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useDispatch } from "react-redux";
 
 interface IGenres {
   id: number;
   name: string;
 }
 
-const MultipleSelect = ({ data, onChange }: any) => {
-  const [selectedItems, setSelectedItems] = useState<IGenres[]>([]);
+const MultipleSelect = ({ data, onChange, selectedData }: any) => {
+  const [selectedItems, setSelectedItems] = useState<IGenres[]>(
+    selectedData || []
+  );
   const toggleSelection = (item: IGenres) => {
     setSelectedItems((prevSelectedItems) => {
       if (prevSelectedItems.find((i) => i.id === item.id)) {
@@ -21,6 +22,7 @@ const MultipleSelect = ({ data, onChange }: any) => {
   useEffect(() => {
     onChange(selectedItems);
   }, [selectedItems, onChange]);
+
   return (
     <View style={styles.container}>
       {data.map((item: IGenres) => (
