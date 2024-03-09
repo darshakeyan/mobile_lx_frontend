@@ -39,7 +39,7 @@ export const getKeywords = async (keyword: string) => {
   return data;
 };
 
-export const movieList = ({
+export const movieList = async ({
   pageParam = 1,
   queryKey,
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
@@ -61,8 +61,8 @@ export const movieList = ({
         )
         .map(([key, value]) => `${key}=${value}`)
         .join("&");
-      const response = API.get(`discover/movie?${queryString}`);
-      // await AsyncStorage.setItem("movieData", JSON.stringify(response.data));
+      const response =  await API.get(`discover/movie?${queryString}`);
+      await AsyncStorage.setItem("movieData", JSON.stringify(response.data));
       return response;
     } else return API.get(`discover/movie?page=${pageParam}`);
   } catch (error) {
