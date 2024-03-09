@@ -28,3 +28,9 @@ export const isFiltersEmpty = <T extends Record<string, any>>(
   }
   return filteredValues;
 };
+
+export function isEmptyObject(obj: {}) {
+  if (obj) {
+    return Object?.keys(obj)?.length === 0;
+  } else return {};
+}

@@ -20,6 +20,7 @@ import FilterModal from "../../components/FilterModal";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { sortByOptions } from "./mock/data";
 import { IGenres } from "../../types/auth";
+import { isEmptyObject } from "../../utils/helper";
 
 const Movies = () => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const Movies = () => {
   const [language, setLanguage] = useState<any>(null);
   const [genresItems, setGenresItems] = useState<IGenres[]>([]);
   const [certificationItems, setCertificationsItems] = useState<IGenres[]>([]);
-  
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const { sortByValue, filters } = useSelector((state: any) => state.app);
@@ -82,7 +83,7 @@ const Movies = () => {
               flexDirection: "row",
               alignItems: "center",
             }}
-            className="space-x-3"
+            className="space-x-2"
           >
             <TouchableOpacity onPress={show}>
               <AntDesign color={"#E19133"} name="filter" size={24} />
@@ -127,10 +128,41 @@ const Movies = () => {
           mode="SORTBY"
         />
 
-        <View>
-          <Text style={{ color: "white" }}>{sortByValue?.label}</Text>
-          <Text style={{ color: "white" }}>{language?.label}</Text>
-        </View>
+        {/* {!isEmptyObject(filters?.language) && (
+          <View style={styles.appliedFiltersContainer}>
+            {language && (
+              <View style={styles.filterContainer}>
+                <Text
+                  style={{ color: "white", fontWeight: "700", fontSize: 14 }}
+                >
+                  {`Language : `}
+                </Text>
+                <Text style={{ color: "white", fontSize: 14 }}>
+                  {language?.label}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    dispatch(
+                      setFilters(
+                        {
+                          language: {},
+                        },
+                        null
+                      )
+                    );
+                  }}
+                >
+                  <AntDesign
+                    color={Colors.primaryColor}
+                    name="close"
+                    size={12}
+                    style={{ fontWeight: "800", marginLeft: 8 }}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )} */}
 
         <View style={styles.movieContainer}>
           <Text style={styles.movieTitle}>Movies</Text>
@@ -184,6 +216,29 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: 320,
     height: 200,
+  },
+  appliedFiltersContainer: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginHorizontal: 8,
+  },
+  filterContainer: {
+    display: "flex",
+    flexDirection: "row",
+    borderWidth: 0.5,
+    borderColor: "white",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  buttonText: {
+    color: "#E19133",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

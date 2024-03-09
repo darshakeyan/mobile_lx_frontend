@@ -45,7 +45,6 @@ const SingleSelect = ({
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item: any) => {
-          console.log(item);
           if (mode === "SORTBY") {
             dispatch(onChange(filters?.filters, item));
           } else onChange(item);
@@ -66,7 +65,6 @@ const SingleSelect = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.primaryBg,
     padding: 8,
   },
   dropdown: {

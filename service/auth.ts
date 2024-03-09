@@ -61,7 +61,6 @@ export const movieList = ({
         )
         .map(([key, value]) => `${key}=${value}`)
         .join("&");
-      console.warn(`discover/movie?${queryString}`);
       const response = API.get(`discover/movie?${queryString}`);
       // await AsyncStorage.setItem("movieData", JSON.stringify(response.data));
       return response;
