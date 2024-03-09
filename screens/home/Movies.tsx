@@ -16,10 +16,7 @@ import Card from "../../components/Card";
 import { Colors } from "../../utils/colors";
 import { useInfiniteMovies, useMovieTrailer } from "../../service/auth";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  logOutFromAccount,
-  setFilters,
-} from "../../redux/actions";
+import { logOutFromAccount, setFilters } from "../../redux/actions";
 import FilterModal from "../../components/FilterModal";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { sortByOptions } from "./mock/data";
@@ -27,7 +24,7 @@ import { isFiltersEmpty } from "../../utils/helper";
 import { IGenres } from "../../types/auth";
 
 const Movies = () => {
-  const [keywords, setKeywords] = useState<any>([]);
+  // const [keywords, setKeywords] = useState<any>([]);
   const [language, setLanguage] = useState<any>(null);
   const [genresItems, setGenresItems] = useState<IGenres[]>([]);
   const [certificationItems, setCertificationsItems] = useState<IGenres[]>([]);
@@ -57,10 +54,10 @@ const Movies = () => {
     fetchPreviousPage,
     isFetchingPreviousPage,
     hasNextPage,
-  } = useInfiniteMovies({ sortByValue, filters });
+  } = useInfiniteMovies(sortByValue, { ...filters });
 
-  const { data: video, isLoading: isMovieVideoLoading } =
-    useMovieTrailer(movieId);
+  // const { data: video, isLoading: isMovieVideoLoading } =
+  //   useMovieTrailer(movieId);
 
   const moviesData = data?.pages.flatMap((page) => {
     return page?.data?.results?.map((movie: any) => {
@@ -139,8 +136,8 @@ const Movies = () => {
         <FilterModal
           visible={modalVisible}
           setVisible={setModalVisible}
-          keywords={keywords}
-          setKeywords={setKeywords}
+          // keywords={keywords}
+          // setKeywords={setKeywords}
           language={language}
           setLanguage={setLanguage}
           genresItems={genresItems}

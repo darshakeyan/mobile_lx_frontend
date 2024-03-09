@@ -23,14 +23,14 @@ import {
   transformArrayToStringById,
   transformArrayToStringByName,
 } from "../../utils/helper";
-import MultiSelectDropdown from "../MultiSelectDropdown";
+// import MultiSelectDropdown from "../MultiSelectDropdown";
 import { useDebounce } from "../../hooks/useDebounce";
 
 const FilterModal = ({
   visible,
   setVisible,
-  keywords,
-  setKeywords,
+  // keywords,
+  // setKeywords,
   language,
   setLanguage,
   genresItems,
@@ -40,8 +40,8 @@ const FilterModal = ({
 }: any) => {
   const dispatch = useDispatch();
   const { sortByValue, filters } = useSelector((state: any) => state.app);
-  const [keywordSearchQuery, setKeywordSearchQuery] = useState<string>("");
-  const debouncedSearchValue = useDebounce(keywordSearchQuery || "", 500);
+  // const [keywordSearchQuery, setKeywordSearchQuery] = useState<string>("");
+  // const debouncedSearchValue = useDebounce(keywordSearchQuery || "", 500);
   const { data } = useLanguages();
   const { data: keywordsData, isLoading: isKeywordsLoading } = useKeywords("m");
   const { data: genres, isLoading: isGenresLoading } = useGenres();
@@ -87,13 +87,13 @@ const FilterModal = ({
             </View>
           </View>
           <ScrollView>
-            <Text style={styles.text}>Keywords</Text>
+            {/* <Text style={styles.text}>Keywords</Text>
             <MultiSelectDropdown
               data={transformedKeywords}
               onChange={setKeywords}
               setKeywordSearchQuery={setKeywordSearchQuery}
               keywords={keywords}
-            />
+            /> */}
             <SingleSelect
               data={languages}
               placeholder="Select Language"
@@ -131,7 +131,7 @@ const FilterModal = ({
           dispatch(
             setFilters(
               {
-                keywords: keywords?.join("|"),
+                // keywords: keywords?.join("|"),
                 language: language,
                 genres: transformArrayToStringById(genresItems),
                 certification: transformArrayToStringByName(certificationItems),

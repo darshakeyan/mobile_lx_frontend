@@ -21,7 +21,10 @@ export const appReducers = (state = initialState, action: any) =>
         draftState.sortByValue = action.value;
       case SET_FILTERS:
         draftState.sortByValue = action.sortBy;
-        draftState.filters = action.filter;
+        draftState.filters = {
+          ...draftState.filters,
+          ...action.filter,
+        };
         break;
     }
   });

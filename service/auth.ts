@@ -43,8 +43,11 @@ export const movieList = ({
   queryKey,
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
   try {
-    console.warn(queryKey[1])
-    if (typeof queryKey[1] === "object" && queryKey[1]?.filters) {
+    console.warn(queryKey[1]);
+    if (
+      typeof queryKey[1] === "object" &&
+      (queryKey[1]?.filters || queryKey[1]?.sortByValue)
+    ) {
       const filter = queryKey[1]?.filters;
       const queryParams = {
         sort_by: queryKey[1]?.sortByValue,
@@ -59,6 +62,7 @@ export const movieList = ({
         )
         .map(([key, value]) => `${key}=${value}`)
         .join("&");
+      console.warn(`discover/movie?${queryString}`);
       const response = API.get(`discover/movie?${queryString}`);
       // await AsyncStorage.setItem("movieData", JSON.stringify(response.data));
       return response;
@@ -69,8 +73,13 @@ export const movieList = ({
   }
 };
 
-export const useInfiniteMovies = (q?: Record<string, any>) => {
-  const queryKey = useMemo(() => ["movies", q], [q]);
+export const useInfiniteMovies = (
+  sortByValue: string | null,
+  filters: Record<string, any>
+) => {
+  const queryKey = useMemo(() => {
+    return ["movies", { sortByValue, filters }];
+  }, [sortByValue, filters]);
   return useInfiniteQuery({
     queryKey: queryKey,
     queryFn: movieList,
